@@ -1,9 +1,11 @@
-import Mongoose = require('mongoose');
+import mongoose = require('mongoose');
+
+mongoose.Promise = global.Promise;
 
 
 class DBConnection {
   static mongooseInstance: any;
-  static mongooseConnection: Mongoose.Connection;
+  static mongooseConnection: mongoose.Connection;
 
   constructor() {
     DBConnection.connect();
@@ -12,12 +14,14 @@ class DBConnection {
   static connect() {
     if (this.mongooseInstance) return this.mongooseInstance;
 
-    this.mongooseConnection = Mongoose.connection;
-    // this.mongooseConnection.once('open', () => {
-    //   console.log('Connected to mongodb');
-    // });
+    this.mongooseConnection = mongoose.connection;
+    this.mongooseConnection.once('open', () => {
+      console.log('Connected to mongodb');
+    });
 
-    this.mongooseInstance = Mongoose.connect('mongodb://localhost/warriors');
+    this.mongooseInstance = mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true
+    });
     return this.mongooseInstance;
   }
 }
